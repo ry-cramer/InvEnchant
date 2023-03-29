@@ -1,6 +1,10 @@
 package com.satiryz.invenchant;
 
+import org.slf4j.Logger;
+
 import com.mojang.logging.LogUtils;
+import com.satiryz.invenchant.init.EnchantmentInit;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,7 +17,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(InvEnchant.MODID)
@@ -21,11 +24,13 @@ public class InvEnchant
 {
     public static final String MODID = "invenchant";
     private static final Logger LOGGER = LogUtils.getLogger();
-    
+
     public InvEnchant()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        EnchantmentInit.ENCHANTMENTS.register(modEventBus);
+        
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
