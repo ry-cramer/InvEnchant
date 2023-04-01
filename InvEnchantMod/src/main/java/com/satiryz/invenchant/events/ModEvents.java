@@ -16,13 +16,14 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = InvEnchant.MODID)
 public class ModEvents {
 	@SubscribeEvent
-    public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
-        if(event.getObject() instanceof Player) {
-            if(!event.getObject().getCapability(ModItemHandlerProvider.ITEM_HANDLER).isPresent()) {
-                event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties"), new ModItemHandlerProvider());
-            }
-        }
-    }
+	public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
+		if (event.getObject() instanceof Player) {
+			if (!event.getObject().getCapability(ModItemHandlerProvider.ITEM_HANDLER).isPresent()) {
+				event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties"),
+						new ModItemHandlerProvider((Player) event.getObject()));
+			}
+		}
+	}
 
     @SubscribeEvent
     public static void onPlayerCloned(PlayerEvent.Clone event) {

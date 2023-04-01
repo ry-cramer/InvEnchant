@@ -10,6 +10,7 @@ import com.satiryz.invenchant.capabilities.ModItemHandlerProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+// Keeping this because it may be useful later, but currently unused class
 public class ModInventoryHelper {
 	
 	public static class EmptyIterator<T> implements Iterator<T> {
