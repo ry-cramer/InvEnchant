@@ -4,32 +4,34 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class ModItemHandler extends ItemStackHandler implements IItemHandler {
+@AutoRegisterCapability
+public class ModShulkerInventoryHandler extends ItemStackHandler implements IItemHandler {
 
 	private NonNullList<ItemStack> stacks;
 
-	public ModItemHandler() {
-		this(36);
+	public ModShulkerInventoryHandler() {
+		this(27);
 	}
 
-	public ModItemHandler(int size) {
+	public ModShulkerInventoryHandler(int size) {
 		this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
 	}
-
-	public ModItemHandler(Player player) {
-		this.stacks = player.getInventory().items;
+	
+	public ModShulkerInventoryHandler(ItemStack shulkerBox) {
+		NonNullList<ItemStack> shulkerInventoryData = getShulkerBoxInventory(shulkerBox.serializeNBT());
+		this.stacks = shulkerInventoryData;
 	}
 
 	public NonNullList<ItemStack> getStacks() {
 		return this.stacks;
 	}
 
-	public void copyFrom(ModItemHandler source) {
+	public void copyFrom(ModShulkerInventoryHandler source) {
 		this.stacks = source.stacks;
 	}
 
@@ -61,4 +63,24 @@ public class ModItemHandler extends ItemStackHandler implements IItemHandler {
 		}
 		onLoad();
 	}
+	
+	public static NonNullList<ItemStack> getShulkerBoxInventory(CompoundTag nbt) {
+        //read nbt data and transfer it to the inventory variable
+		System.out.println(nbt);
+		ListTag nbtInventoryData = nbt.getCompound("tag").getCompound("BlockEntityTag").getList("Items", Tag.TAG_COMPOUND);
+        System.out.println("nbtInvData: " + nbtInventoryData);
+        
+        NonNullList<ItemStack> inventory = NonNullList.withSize(27, ItemStack.EMPTY);
+        
+        for(int i = 0; i < nbtInventoryData.size(); i++) {
+        	CompoundTag itemTags = nbtInventoryData.getCompound(i);
+        	int slot = itemTags.getInt("Slot");
+        	
+        	if (slot >= 0 && slot < inventory.size()) {
+        		inventory.set(slot, ItemStack.of(itemTags));
+        	}
+        }
+        
+        return inventory;
+    }
 }

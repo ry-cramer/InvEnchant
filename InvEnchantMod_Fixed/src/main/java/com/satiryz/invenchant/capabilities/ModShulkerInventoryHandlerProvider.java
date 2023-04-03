@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -13,30 +13,31 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class ModItemHandlerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-	public static Capability<ModItemHandler> ITEM_HANDLER = CapabilityManager
-			.get(new CapabilityToken<ModItemHandler>() {
+public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+	public static Capability<ModShulkerInventoryHandler> SHULKER_INVENTORY_HANDLER = CapabilityManager
+			.get(new CapabilityToken<ModShulkerInventoryHandler>() {
 			});
 
-	private ModItemHandler stacks = null;
-	private Player player = null;
-	private final LazyOptional<ModItemHandler> optional = LazyOptional.of(this::createStacks);
+	private ModShulkerInventoryHandler stacks = null;
+	private ItemStack shulkerBox = null;
+	private final LazyOptional<ModShulkerInventoryHandler> optional = LazyOptional.of(this::createStacks);
 
-	private ModItemHandler createStacks() {
+	private ModShulkerInventoryHandler createStacks() {
 		if (this.stacks == null) {
-			this.stacks = new ModItemHandler(player);
+			if (!(this.shulkerBox == null)) {
+				this.stacks = new ModShulkerInventoryHandler(shulkerBox);
+			}
 		}
-
 		return this.stacks;
 	}
 
-	public ModItemHandlerProvider(Player player) {
-		this.player = player;
+	public ModShulkerInventoryHandlerProvider(ItemStack shulkerBox) {
+		this.shulkerBox = shulkerBox;
 	}
-
+	
 	@Override
 	public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if (cap == ITEM_HANDLER) {
+		if (cap == SHULKER_INVENTORY_HANDLER) {
 			return optional.cast();
 		}
 

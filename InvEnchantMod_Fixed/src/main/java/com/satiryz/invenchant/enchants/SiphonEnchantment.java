@@ -1,9 +1,10 @@
 package com.satiryz.invenchant.enchants;
 
-import com.satiryz.invenchant.DevTools;
 import com.satiryz.invenchant.InvEnchant;
-import com.satiryz.invenchant.capabilities.ModItemHandler;
-import com.satiryz.invenchant.capabilities.ModItemHandlerProvider;
+import com.satiryz.invenchant.capabilities.ModPlayerInventoryHandler;
+import com.satiryz.invenchant.capabilities.ModPlayerInventoryHandlerProvider;
+import com.satiryz.invenchant.capabilities.ModShulkerInventoryHandler;
+import com.satiryz.invenchant.capabilities.ModShulkerInventoryHandlerProvider;
 import com.satiryz.invenchant.init.EnchantmentInit;
 import com.satiryz.invenchant.tags.ShulkerLikeTag;
 
@@ -28,19 +29,22 @@ public class SiphonEnchantment extends Enchantment {
 	public static void onItemPickup(ItemPickupEvent event) {
 		Player player = event.getEntity();
 		ItemStack pickedUpStack = event.getStack();
-		
-		if(!pickedUpStack.isStackable()) {
+
+		if (!pickedUpStack.isStackable()) {
 			return;
 		}
 
-		DevTools.debugMessage(("Picked up stack: " + pickedUpStack), player);
+		System.out.println("Picked up stack: " + pickedUpStack);
 
-		ModItemHandler playerInventory = player.getCapability(ModItemHandlerProvider.ITEM_HANDLER).resolve().get();
-		DevTools.debugMessage(("Inventory: " + playerInventory.getStacks()), player);
-		
+		ModPlayerInventoryHandler playerInventory = player.getCapability(ModPlayerInventoryHandlerProvider.PLAYER_INVENTORY_HANDLER).resolve().get();
+		System.out.println("Inventory: " + playerInventory.getStacks());
+
 		for (ItemStack invStack : playerInventory.getStacks()) {
 			if (invStack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
-				DevTools.debugMessage("Found available shulker box", player);
+				System.out.println("Found available shulker box");
+				ModShulkerInventoryHandler shulkerInventory = invStack.getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).resolve().get();
+				System.out.println("(Hopefully also) Shulker Box Inventory: " + shulkerInventory);
+
 				break;
 			}
 		}
