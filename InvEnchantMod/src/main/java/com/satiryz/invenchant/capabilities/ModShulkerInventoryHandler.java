@@ -84,3 +84,4 @@ public class ModShulkerInventoryHandler extends ItemStackHandler implements IIte
         return inventory;
     }
 }
+

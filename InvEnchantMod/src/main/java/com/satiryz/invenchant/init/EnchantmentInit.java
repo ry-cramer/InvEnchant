@@ -22,3 +22,4 @@ public class EnchantmentInit {
 	public static final RegistryObject<Enchantment> SIPHON = ENCHANTMENTS.register("siphon", () -> SIPHON_ENCHANT);
 	public static final RegistryObject<Enchantment> REPLENISH = ENCHANTMENTS.register("replenish", () -> REPLENISH_ENCHANT);
 }
+
