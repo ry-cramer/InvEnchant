@@ -1,8 +1,8 @@
 package com.satiryz.invenchant.enchants;
 
 import com.satiryz.invenchant.InvEnchant;
-import com.satiryz.invenchant.Tags;
 import com.satiryz.invenchant.init.EnchantmentInit;
+import com.satiryz.invenchant.tags.ShulkerLikeTag;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +17,6 @@ public class ReplenishEnchantment extends Enchantment {
 	
 	@Override
 	  public boolean canEnchant(ItemStack stack) {
-	    return Tags.isShulkerLike(stack);
+	    return ShulkerLikeTag.isShulkerLike(stack);
 	  }
 }
