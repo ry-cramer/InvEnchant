@@ -1,6 +1,5 @@
 package com.satiryz.invenchant;
 
-import com.satiryz.invenchant.entities.ModEntities;
 import com.satiryz.invenchant.init.EnchantmentInit;
 import com.satiryz.invenchant.networking.ModPackets;
 
@@ -22,8 +21,6 @@ public class InvEnchant
         modEventBus.addListener(this::commonSetup);
         
         EnchantmentInit.ENCHANTMENTS.register(modEventBus);
-        //ModEntities.ENTITY_TYPES.register(modEventBus);
-        
         MinecraftForge.EVENT_BUS.register(this);
     }
     
