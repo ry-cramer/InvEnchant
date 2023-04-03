@@ -2,9 +2,10 @@ package com.satiryz.invenchant.enchants;
 
 import com.satiryz.invenchant.DevTools;
 import com.satiryz.invenchant.InvEnchant;
-import com.satiryz.invenchant.Tags;
+import com.satiryz.invenchant.capabilities.ModItemHandler;
 import com.satiryz.invenchant.capabilities.ModItemHandlerProvider;
 import com.satiryz.invenchant.init.EnchantmentInit;
+import com.satiryz.invenchant.tags.ShulkerLikeTag;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -21,24 +22,27 @@ public class SiphonEnchantment extends Enchantment {
 
 	@Override
 	public boolean canEnchant(ItemStack stack) {
-		return Tags.isShulkerLike(stack);
+		return ShulkerLikeTag.isShulkerLike(stack);
 	}
 
 	public static void onItemPickup(ItemPickupEvent event) {
 		Player player = event.getEntity();
 		ItemStack pickedUpStack = event.getStack();
+		
+		if(!pickedUpStack.isStackable()) {
+			return;
+		}
 
 		DevTools.debugMessage(("Picked up stack: " + pickedUpStack), player);
-		DevTools.debugMessage(("Inventory: " + player.getInventory()), player);
+
+		ModItemHandler playerInventory = player.getCapability(ModItemHandlerProvider.ITEM_HANDLER).resolve().get();
+		DevTools.debugMessage(("Inventory: " + playerInventory.getStacks()), player);
 		
-		player.getCapability(ModItemHandlerProvider.ITEM_HANDLER).ifPresent(stack -> {
-			DevTools.debugMessage(("Also (possibly) inventory?: " + stack.getStacks()), player);
-			for (ItemStack invStack : stack.getStacks()) {
-				if (Tags.isShulkerLike(invStack)) {
-					DevTools.debugMessage("Found available shulker box", player);
-					break;
-				}
+		for (ItemStack invStack : playerInventory.getStacks()) {
+			if (invStack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
+				DevTools.debugMessage("Found available shulker box", player);
+				break;
 			}
-		});
+		}
 	}
 }
