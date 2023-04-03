@@ -1,4 +1,6 @@
-package com.satiryz.invenchant;
+package com.satiryz.invenchant.tags;
+
+import com.satiryz.invenchant.InvEnchant;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -6,7 +8,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class Tags {
+public class EnchantmentTags {
 	public static final TagKey<Item> SHULKER_LIKE = 
 			ItemTags.create(new ResourceLocation(InvEnchant.MODID, "shulker_like"));
 	
