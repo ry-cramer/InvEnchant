@@ -10,12 +10,12 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
 	public static Capability<ModShulkerInventoryHandler> SHULKER_INVENTORY_HANDLER = CapabilityManager
-			.get(new CapabilityToken<ModShulkerInventoryHandler>() {
+			.get(new CapabilityToken<>() { 
 			});
 
 	private ModShulkerInventoryHandler stacks = null;
@@ -45,15 +45,17 @@ public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, 
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		createStacks().saveNBTData(nbt);
-		return nbt;
-	}
+    public CompoundTag serializeNBT()
+    {
+        CompoundTag nbt = new CompoundTag();
+        nbt = createStacks().saveNBTData(nbt);
+        return nbt;
+    }
 
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		createStacks().loadNBTData(nbt);
-	}
+    @Override
+    public void deserializeNBT(CompoundTag nbt)
+    {
+    	createStacks().loadNBTData(nbt);
+    }
 }
 

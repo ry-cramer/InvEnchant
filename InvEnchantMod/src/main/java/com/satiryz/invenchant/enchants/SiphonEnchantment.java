@@ -13,6 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class SiphonEnchantment extends Enchantment {
 
@@ -27,6 +29,10 @@ public class SiphonEnchantment extends Enchantment {
 	}
 
 	public static void onItemPickup(ItemPickupEvent event) {
+		if (event.isCanceled() || event.getResult() == Result.ALLOW) {
+		      return;
+		    }
+		
 		Player player = event.getEntity();
 		ItemStack pickedUpStack = event.getStack();
 
@@ -41,12 +47,35 @@ public class SiphonEnchantment extends Enchantment {
 
 		for (ItemStack invStack : playerInventory.getStacks()) {
 			if (invStack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
-				System.out.println("Found available shulker box");
+				
 				ModShulkerInventoryHandler shulkerInventory = invStack.getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).resolve().get();
-				System.out.println("(Hopefully also) Shulker Box Inventory: " + shulkerInventory);
-
+				System.out.println("Shulker Box Slots: " + shulkerInventory.getSlots());
+				System.out.println("Shulker Box Inventory: " + shulkerInventory.getStacks());
+				//if has valid slot, insert stack into slot
+				for (int shulkerSlot = 0; shulkerSlot < shulkerInventory.getSlots(); shulkerSlot++) {
+					if (isAvailableSlot(pickedUpStack, shulkerInventory.getStackInSlot(shulkerSlot))) {
+						System.out.println("Found available shulker box");
+						pickedUpStack = insertIntoSlot(pickedUpStack, shulkerSlot, shulkerInventory);
+						System.out.println("Stack: " + pickedUpStack);
+					}
+					if (invStack.isEmpty()) {
+						System.out.println("Item Stack Empty");
+						break;
+					}
+				}
 				break;
 			}
 		}
+	}
+	
+	public static boolean isAvailableSlot(ItemStack stack, ItemStack inventoryStack) {
+		if (ItemHandlerHelper.canItemStacksStackRelaxed(inventoryStack, stack)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static ItemStack insertIntoSlot(ItemStack stack, int slot, ModShulkerInventoryHandler shulkerInventory) {
+		return shulkerInventory.insertItem(slot, stack, false);
 	}
 }
