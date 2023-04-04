@@ -38,10 +38,10 @@ public class ModEvents {
 		    }
 		ItemStack stack = event.getObject();
 		if (stack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
-			if (!event.getObject().getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).isPresent()) {
+			//if (!event.getObject().getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).isPresent()) {
 				event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties.shulker_box"),
 						new ModShulkerInventoryHandlerProvider(stack));
-			}
+			//}
 		}
 	}
 

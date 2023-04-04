@@ -4,16 +4,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
+public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider/*, ICapabilitySerializable<CompoundTag> */{
 	public static Capability<ModShulkerInventoryHandler> SHULKER_INVENTORY_HANDLER = CapabilityManager
 			.get(new CapabilityToken<>() { 
 			});
@@ -44,7 +42,7 @@ public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, 
 		return LazyOptional.empty();
 	}
 
-	@Override
+	/*@Override
     public CompoundTag serializeNBT()
     {
         CompoundTag nbt = new CompoundTag();
@@ -56,6 +54,6 @@ public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider, 
     public void deserializeNBT(CompoundTag nbt)
     {
     	createStacks().loadNBTData(nbt);
-    }
+    }*/
 }
 

@@ -27,11 +27,10 @@ public class ModShulkerInventoryHandler implements IItemHandler {
 		System.out.println(stacks.size());
 	}
 
-	public void setSize(int size)
-    {
-        stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-    }
-	
+	public void setSize(int size) {
+		stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+	}
+
 	@Override
 	public int getSlots() {
 		return stacks.size();
@@ -88,45 +87,37 @@ public class ModShulkerInventoryHandler implements IItemHandler {
 	}
 
 	@Override
-    @NotNull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
-        if (amount == 0)
-            return ItemStack.EMPTY;
+	@NotNull
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+		if (amount == 0)
+			return ItemStack.EMPTY;
 
-        validateSlotIndex(slot);
+		validateSlotIndex(slot);
 
-        ItemStack existing = this.stacks.get(slot);
+		ItemStack existing = this.stacks.get(slot);
 
-        if (existing.isEmpty())
-            return ItemStack.EMPTY;
+		if (existing.isEmpty())
+			return ItemStack.EMPTY;
 
-        int toExtract = Math.min(amount, existing.getMaxStackSize());
+		int toExtract = Math.min(amount, existing.getMaxStackSize());
 
-        if (existing.getCount() <= toExtract)
-        {
-            if (!simulate)
-            {
-                this.stacks.set(slot, ItemStack.EMPTY);
-                onContentsChanged(slot);
-                return existing;
-            }
-            else
-            {
-                return existing.copy();
-            }
-        }
-        else
-        {
-            if (!simulate)
-            {
-                this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
-                onContentsChanged(slot);
-            }
+		if (existing.getCount() <= toExtract) {
+			if (!simulate) {
+				this.stacks.set(slot, ItemStack.EMPTY);
+				onContentsChanged(slot);
+				return existing;
+			} else {
+				return existing.copy();
+			}
+		} else {
+			if (!simulate) {
+				this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+				onContentsChanged(slot);
+			}
 
-            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
-        }
-    }
+			return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+		}
+	}
 
 	@Override
 	public int getSlotLimit(int slot) {
@@ -172,43 +163,28 @@ public class ModShulkerInventoryHandler implements IItemHandler {
 	}
 
 	protected void onContentsChanged(int slot) {
-
+		
 	}
-	
-	public CompoundTag saveNBTData(CompoundTag nbt) {
-		ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < stacks.size(); i++)
-        {
-            if (!this.stacks.get(i).isEmpty())
-            {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                this.stacks.get(i).save(itemTag);
-                nbtTagList.add(itemTag);
-            }
-        }
-        nbt.put("Items", nbtTagList);
-        nbt.putInt("Size", stacks.size());
-        return nbt;
-    }
 
-    public void loadNBTData(CompoundTag nbt) {
-    	setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        for (int i = 0; i < tagList.size(); i++)
-        {
-            CompoundTag itemTags = tagList.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-
-            if (slot >= 0 && slot < stacks.size())
-            {
-                stacks.set(slot, ItemStack.of(itemTags));
-            }
-        }
-        onLoad();
-    }
-    
-	protected void onLoad() {
-
-	}
+	/*
+	 * public CompoundTag saveNBTData(CompoundTag nbt) { ListTag nbtTagList = new
+	 * ListTag(); for (int i = 0; i < stacks.size(); i++) { if
+	 * (!this.stacks.get(i).isEmpty()) { CompoundTag itemTag = new CompoundTag();
+	 * itemTag.putInt("Slot", i); this.stacks.get(i).save(itemTag);
+	 * nbtTagList.add(itemTag); } } nbt.put("Items", nbtTagList); nbt.putInt("Size",
+	 * stacks.size()); return nbt; }
+	 * 
+	 * public void loadNBTData(CompoundTag nbt) { setSize(nbt.contains("Size",
+	 * Tag.TAG_INT) ? nbt.getInt("Size") : stacks.size()); ListTag tagList =
+	 * nbt.getList("Items", Tag.TAG_COMPOUND); for (int i = 0; i < tagList.size();
+	 * i++) { CompoundTag itemTags = tagList.getCompound(i); int slot =
+	 * itemTags.getInt("Slot");
+	 * 
+	 * if (slot >= 0 && slot < stacks.size()) { stacks.set(slot,
+	 * ItemStack.of(itemTags)); } } onLoad(); }
+	 * 
+	 * protected void onLoad() {
+	 * 
+	 * }
+	 */
 }

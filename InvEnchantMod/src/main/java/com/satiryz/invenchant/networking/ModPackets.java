@@ -1,7 +1,7 @@
 package com.satiryz.invenchant.networking;
 
 import com.satiryz.invenchant.InvEnchant;
-import com.satiryz.invenchant.networking.packets.InventoryC2SPacket;
+import com.satiryz.invenchant.networking.packets.PlayerInventorySyncS2CPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,33 +13,29 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class ModPackets {
 	private static SimpleChannel INSTANCE;
 
-    private static int packetId = 0;
-    private static int id() {
-        return packetId++;
-    }
+	private static int packetId = 0;
 
-    public static void register() {
-        SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(InvEnchant.MODID, "messages"))
-                .networkProtocolVersion(() -> "1.0")
-                .clientAcceptedVersions(s -> true)
-                .serverAcceptedVersions(s -> true)
-                .simpleChannel();
+	private static int id() {
+		return packetId++;
+	}
 
-        INSTANCE = net;
+	public static void register() {
+		SimpleChannel net = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(InvEnchant.MODID, "messages"))
+				.networkProtocolVersion(() -> "1.0").clientAcceptedVersions(s -> true).serverAcceptedVersions(s -> true)
+				.simpleChannel();
 
-        net.messageBuilder(InventoryC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(InventoryC2SPacket::new)
-                .encoder(InventoryC2SPacket::toBytes)
-                .consumerMainThread(InventoryC2SPacket::handle)
-                .add();
-    }
+		INSTANCE = net;
 
-    public static <MSG> void sendToServer(MSG message) {
-         INSTANCE.sendToServer(message);
-    }
+		net.messageBuilder(PlayerInventorySyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+				.decoder(PlayerInventorySyncS2CPacket::new).encoder(PlayerInventorySyncS2CPacket::toBytes)
+				.consumerMainThread(PlayerInventorySyncS2CPacket::handle).add();
+	}
 
-    public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
-    }
+	public static <MSG> void sendToServer(MSG message) {
+		INSTANCE.sendToServer(message);
+	}
+
+	public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
+		INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+	}
 }
