@@ -11,37 +11,34 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.common.Mod;
 
+@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = InvEnchant.MODID)
 public class ModEvents {
 	@SubscribeEvent
 	public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			if (!event.getObject().getCapability(ModPlayerInventoryHandlerProvider.PLAYER_INVENTORY_HANDLER)
-					.isPresent()) {
+			//if (!event.getObject().getCapability(ModPlayerInventoryHandlerProvider.PLAYER_INVENTORY_HANDLER)
+					//.isPresent()) {
 				event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties.player"),
 						new ModPlayerInventoryHandlerProvider((Player) event.getObject()));
-			}
+			//}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onAttachCapabilitiesContainer(AttachCapabilitiesEvent<ItemStack> event) {
-		if (event.isCanceled() || event.getResult() == Result.ALLOW) {
-		      return;
-		    }
 		ItemStack stack = event.getObject();
 		if (stack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
-			//if (!event.getObject().getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).isPresent()) {
-				event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties.shulker_box"),
-						new ModShulkerInventoryHandlerProvider(stack));
-			//}
+			event.addCapability(new ResourceLocation(InvEnchant.MODID, "properties.shulker_box"),
+					new ModShulkerInventoryHandlerProvider(stack));
 		}
 	}
 

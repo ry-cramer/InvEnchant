@@ -11,11 +11,11 @@ import com.satiryz.invenchant.tags.ShulkerLikeTag;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -31,13 +31,14 @@ public class SiphonEnchantment extends Enchantment {
 		return ShulkerLikeTag.isShulkerLike(stack);
 	}
 
-	public static void onItemPickup(ItemPickupEvent event) {
+	public static void onItemPickup(EntityItemPickupEvent event) {
 		if (event.isCanceled() || event.getResult() == Result.ALLOW) {
 			return;
 		}
 
+		ItemEntity itemEntity = event.getItem();
 		Player player = event.getEntity();
-		ItemStack pickedUpStack = event.getStack();
+		ItemStack pickedUpStack = event.getItem().getItem();
 
 		if (!pickedUpStack.isStackable()) {
 			return;
@@ -53,10 +54,11 @@ public class SiphonEnchantment extends Enchantment {
 		for (ItemStack invStack : playerInventory.getStacks()) {
 			// if item stack is a Siphon shulker box
 			if (invStack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
-				// get shulker box inventory
 				ModShulkerInventoryHandler shulkerInventory = invStack
-						.getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).resolve().get();
+						.getCapability(ModShulkerInventoryHandlerProvider.SHULKER_INVENTORY_HANDLER).resolve()
+						.get();
 				System.out.println("Shulker Box Inventory: " + shulkerInventory.getStacks());
+				System.out.println("Shulker Box Slots: " + shulkerInventory.getSlots());
 				// for slot in shulker box
 				for (int shulkerSlot = 0; shulkerSlot < shulkerInventory.getSlots(); shulkerSlot++) {
 					// if there is an available slot (matching item that isn't full
@@ -75,31 +77,35 @@ public class SiphonEnchantment extends Enchantment {
 					}
 				}
 				System.out.println(shulkerInventory.getStacks());
-				
+
 				// if there is no more stack, leave loops
+				System.out.println(pickedUpStack);
 				if (pickedUpStack.isEmpty()) {
-					System.out.println("Item Stack Empty");
 					break;
 				}
 			}
 		}
-		// if there is still more stack after trying shulker boxes, insert the rest of the items as normal
+		// if there is still more stack after trying shulker boxes, insert the rest of
+		// the items as normal
 		if (!pickedUpStack.isEmpty()) {
 			pickedUpStack = ItemHandlerHelper.insertItemStacked(playerInventory, pickedUpStack, false);
+			System.out.println("New Player Inventory" + playerInventory.getStacks());
+			System.out.println(pickedUpStack);
+		}
+
+		int totalPickedUp = itemEntity.getItem().getCount() - pickedUpStack.getCount();
+
+		if (totalPickedUp > 0) {
+			event.setCanceled(true);
+			itemEntity.getItem().setCount(pickedUpStack.getCount());
+			player.getInventory().setChanged();
+
+			((ServerPlayer) player).connection
+					.send(new ClientboundTakeItemEntityPacket(event.getItem().getId(), player.getId(), totalPickedUp));
+			player.containerMenu.broadcastChanges();
+			System.out.println("New Player Inventory" + playerInventory.getStacks());
 		}
 		
-		int totalPickedUp = event.getStack().getCount() - pickedUpStack.getCount();
-
-	    if (totalPickedUp > 0) {
-	    	event.setCanceled(true);
-	    	event.getStack().setCount(pickedUpStack.getCount());
-	    	player.getInventory().setChanged();
-
-	    	((ServerPlayer) player).connection.send(new ClientboundTakeItemEntityPacket(Item.getId(event.getStack().getItem()), player.getId(), totalPickedUp));
-
-	    	player.containerMenu.broadcastChanges();
-	    	System.out.println("New Player Inventory" + player.getInventory().items);
-	    }
 	}
 
 	public static boolean isAvailableSlot(ItemStack stack, ItemStack inventoryStack) {

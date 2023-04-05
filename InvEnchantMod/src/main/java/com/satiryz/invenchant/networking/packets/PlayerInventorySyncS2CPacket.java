@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
+// Currently unutilized
 public class PlayerInventorySyncS2CPacket {
 
 	private final CompoundTag playerInventory;
@@ -26,7 +27,7 @@ public class PlayerInventorySyncS2CPacket {
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			// HERE WE ARE ON THE CLIENT!
-			//playerInventory.set(this.playerInventory);
+			
 		});
 		return true;
 	}

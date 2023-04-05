@@ -13,18 +13,8 @@ import net.minecraftforge.items.ItemStackHandler;
 @AutoRegisterCapability
 public class ModPlayerInventoryHandler extends ItemStackHandler implements IItemHandler {
 
-	private NonNullList<ItemStack> stacks;
-
-	public ModPlayerInventoryHandler() {
-		this(36);
-	}
-
-	public ModPlayerInventoryHandler(int size) {
-		this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-	}
-
 	public ModPlayerInventoryHandler(Player player) {
-		this.stacks = player.getInventory().items;
+		super(player.getInventory().items);
 	}
 
 	public NonNullList<ItemStack> getStacks() {

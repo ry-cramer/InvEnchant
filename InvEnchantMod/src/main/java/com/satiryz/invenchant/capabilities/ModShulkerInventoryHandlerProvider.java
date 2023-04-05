@@ -11,9 +11,10 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider/*, ICapabilitySerializable<CompoundTag> */{
+public class ModShulkerInventoryHandlerProvider
+		implements ICapabilityProvider{
 	public static Capability<ModShulkerInventoryHandler> SHULKER_INVENTORY_HANDLER = CapabilityManager
-			.get(new CapabilityToken<>() { 
+			.get(new CapabilityToken<>() {
 			});
 
 	private ModShulkerInventoryHandler stacks = null;
@@ -32,7 +33,7 @@ public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider/*
 	public ModShulkerInventoryHandlerProvider(ItemStack shulkerBox) {
 		this.shulkerBox = shulkerBox;
 	}
-	
+
 	@Override
 	public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 		if (cap == SHULKER_INVENTORY_HANDLER) {
@@ -41,19 +42,4 @@ public class ModShulkerInventoryHandlerProvider implements ICapabilityProvider/*
 
 		return LazyOptional.empty();
 	}
-
-	/*@Override
-    public CompoundTag serializeNBT()
-    {
-        CompoundTag nbt = new CompoundTag();
-        nbt = createStacks().saveNBTData(nbt);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt)
-    {
-    	createStacks().loadNBTData(nbt);
-    }*/
 }
-
