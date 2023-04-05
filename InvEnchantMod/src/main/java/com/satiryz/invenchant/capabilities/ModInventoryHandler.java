@@ -4,30 +4,33 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class ModShulkerInventoryHandler extends ItemStackHandler implements IItemHandler {
+public class ModInventoryHandler extends ItemStackHandler implements IItemHandler {
 
-	public ModShulkerInventoryHandler(ItemStack shulkerBox) {
+	public ModInventoryHandler(ItemStack shulkerBox) {
 		super(getShulkerBoxInventory(shulkerBox.serializeNBT()));
+	}
+	
+	public ModInventoryHandler(Player player) {
+		super(player.getInventory().items);
 	}
 
 	public NonNullList<ItemStack> getStacks() {
 		return this.stacks;
 	}
 
-	public void copyFrom(ModShulkerInventoryHandler source) {
+	public void copyFrom(ModInventoryHandler source) {
 		this.stacks = source.stacks;
 	}
 
 	public static NonNullList<ItemStack> getShulkerBoxInventory(CompoundTag nbt) {
 		// read nbt data and transfer it to the inventory variable
-		System.out.println(nbt);
 		ListTag nbtInventoryData = nbt.getCompound("tag").getCompound("BlockEntityTag").getList("Items",
 				Tag.TAG_COMPOUND);
-		System.out.println("nbtInvData: " + nbtInventoryData);
 
 		NonNullList<ItemStack> inventory = NonNullList.withSize(27, ItemStack.EMPTY);
 
@@ -39,7 +42,6 @@ public class ModShulkerInventoryHandler extends ItemStackHandler implements IIte
 				inventory.set(slot, ItemStack.of(itemTags));
 			}
 		}
-		System.out.println("Before Initialize: " + inventory);
 		return inventory;
 	}
 }
