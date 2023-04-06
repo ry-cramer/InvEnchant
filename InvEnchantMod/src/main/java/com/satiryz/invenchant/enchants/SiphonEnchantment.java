@@ -42,11 +42,18 @@ public class SiphonEnchantment extends Enchantment {
 			return;
 		}
 
-		ModInventoryHandler playerInventory = player
-				.getCapability(ModInventoryHandlerProvider.INVENTORY_HANDLER).resolve().get();
+		ModInventoryHandler playerInventory = player.getCapability(ModInventoryHandlerProvider.INVENTORY_HANDLER)
+				.resolve().get();
 
 		// for item stack in player inventory
 		for (ItemStack invStack : playerInventory.getStacks()) {
+			if (pickedUpStack.isEmpty() || !pickedUpStack.isStackable()) {
+				break;
+			}
+
+			if (invStack.isEmpty()) {
+				continue;
+			}
 			// if item stack is a Siphon shulker box
 			if (invStack.getEnchantmentLevel(EnchantmentInit.SIPHON_ENCHANT) > 0) {
 				ModInventoryHandler shulkerInventory = invStack
@@ -65,11 +72,7 @@ public class SiphonEnchantment extends Enchantment {
 						}
 					}
 				}
-				// if there is no more stack, leave loops
-				if (pickedUpStack.isEmpty()) {
-					break;
-				}
-				System.out.println("New Shulker Inventory: " + shulkerInventory.getStacks());
+				System.out.println("Shulker Inventory: " + shulkerInventory.getStacks());
 			}
 		}
 		// if there is still more stack after trying shulker boxes, insert the rest of
@@ -87,11 +90,11 @@ public class SiphonEnchantment extends Enchantment {
 		if (totalPickedUp > 0) {
 			event.setCanceled(true);
 			System.out.println("Line 87: " + playerInventory.getStacks());
-			itemEntity.getItem().setCount(pickedUpStack.getCount());
+			itemEntity.setItem(pickedUpStack);
 			System.out.println("Line 89: " + playerInventory.getStacks());
 			player.getInventory().setChanged();
 			System.out.println("Line 91: " + playerInventory.getStacks());
-			
+
 			((ServerPlayer) player).connection
 					.send(new ClientboundTakeItemEntityPacket(event.getItem().getId(), player.getId(), totalPickedUp));
 			System.out.println("Line 95: " + playerInventory.getStacks());
