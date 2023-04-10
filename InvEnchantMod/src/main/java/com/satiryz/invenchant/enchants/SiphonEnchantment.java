@@ -72,34 +72,25 @@ public class SiphonEnchantment extends Enchantment {
 						}
 					}
 				}
-				System.out.println("Shulker Inventory: " + shulkerInventory.getStacks());
+				System.out.println(invStack.serializeNBT());
 			}
 		}
 		// if there is still more stack after trying shulker boxes, insert the rest of
 		// the items as normal
 		if (!pickedUpStack.isEmpty()) {
 			pickedUpStack = ItemHandlerHelper.insertItemStacked(playerInventory, pickedUpStack, false);
-			System.out.println("PickedUpStack: " + pickedUpStack.getCount());
-			System.out.println("PickedUpStack Empty: " + pickedUpStack.isEmpty());
-			System.out.println("Player Inventory: " + playerInventory.getStacks());
 		}
 
 		int totalPickedUp = itemEntity.getItem().getCount() - pickedUpStack.getCount();
-		System.out.println("Line 83: " + playerInventory.getStacks());
 
 		if (totalPickedUp > 0) {
 			event.setCanceled(true);
-			System.out.println("Line 87: " + playerInventory.getStacks());
 			itemEntity.setItem(pickedUpStack);
-			System.out.println("Line 89: " + playerInventory.getStacks());
 			player.getInventory().setChanged();
-			System.out.println("Line 91: " + playerInventory.getStacks());
 
 			((ServerPlayer) player).connection
 					.send(new ClientboundTakeItemEntityPacket(event.getItem().getId(), player.getId(), totalPickedUp));
-			System.out.println("Line 95: " + playerInventory.getStacks());
 			player.containerMenu.broadcastChanges();
-			System.out.println("Line 97: " + playerInventory.getStacks());
 		}
 	}
 

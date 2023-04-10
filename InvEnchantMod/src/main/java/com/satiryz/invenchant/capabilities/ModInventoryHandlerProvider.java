@@ -47,6 +47,6 @@ public class ModInventoryHandlerProvider implements ICapabilityProvider {
 			return optional.cast();
 		}
 
-		return LazyOptional.empty();
+		return LazyOptional.empty();		
 	}
 }
